@@ -96,6 +96,7 @@ def act(action, m, st, cred, now):
         if not wait_state(mid, cred, paused, limit=150):
             raise ApiError(f"主动 {down} 150 秒内没完成，下一拍继续")
         st["state"] = paused             # 下一拍看到 running 就按刚唤醒处理
+        time.sleep(10)                   # 🌟 加在这里：等待10秒确保暂停彻底生效
         action = "start" if down == "stop" else "resume"
     if action in ("resume", "start"):
         call("POST", f"/v1/machines/{mid}/{action}", cred)
