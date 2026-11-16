@@ -1,10 +1,13 @@
 name: InstaBox Keepalive
 
 on:
-  # schedule:
-  #   - cron: '*/10 * * * *' # 注释，不再用github内置定时做主力
-  workflow_dispatch: # 手动按钮触发，应急
-  repository_dispatch: # 外部API（Crontap）触发
+  # 【备用兜底】GitHub内置定时，不做主力，外部失效时保底
+  schedule:
+    - cron: '*/10 * * * *'
+  # 【手动应急】页面点按钮直接触发，调试/紧急唤醒用
+  workflow_dispatch:
+  # 【主力触发】外部定时服务通过API调用，稳定不丢任务
+  repository_dispatch:
     types: [instabox-keepalive-run]
 
 permissions:
@@ -23,7 +26,7 @@ jobs:
         with:
           python-version: '3.11'
           
-      - name: Run original tick script
+      - name: Run tick script
         env:
           INSTABOX_API_KEY: ${{ secrets.INSTABOX_API_KEY }}
         run: |
