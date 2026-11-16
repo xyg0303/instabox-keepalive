@@ -1,0 +1,27 @@
+name: Auto Commit Keep Alive
+
+on:
+  schedule:
+    - cron: '0 0 1 */1 *' # 每月的 1 号 0 点自动运行一次
+  workflow_dispatch: # 允许你手动点击测试
+
+permissions:
+  contents: write # 必须加上这个，否则没法自动提交代码
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update timestamp
+        run: date > timestamp.txt
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add timestamp.txt
+          git commit -m "chore: auto keep-alive commit" || exit 0
+          git push
